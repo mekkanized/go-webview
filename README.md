@@ -1,4 +1,3 @@
-# go-webkit
+# go-webview
 
-WebKit bindings for pure Go
-
+A cross-platform pure Go implementation of the [webview/webview](https://github.com/webview/webview) library.
