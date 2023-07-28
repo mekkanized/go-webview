@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/Mekkanized/go-webview"
+	"github.com/mekkanized/go-webview"
 )
 
 func main() {

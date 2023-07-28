@@ -10,7 +10,7 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/Mekkanized/go-webview/internal/webkitgtk"
+	"github.com/mekkanized/go-webview/internal/webkitgtk"
 	"github.com/pkg/errors"
 )
 

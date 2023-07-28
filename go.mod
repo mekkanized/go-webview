@@ -1,4 +1,4 @@
-module github.com/Mekkanized/go-webview
+module github.com/mekkanized/go-webview
 
 go 1.20
 
