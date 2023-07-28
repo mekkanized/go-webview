@@ -1,4 +1,4 @@
-//go:build darwin || linux
+//go:build linux
 
 package webkitgtk
 
@@ -62,7 +62,12 @@ func (c *defaultContext) GFree(mem uintptr) {
 }
 
 func (c *defaultContext) GIdleAddFull(priority int, function GSourceFunc, data uintptr, notify GDestroyNotify) {
-	purego.SyscallN(c.gIdleAddFull, uintptr(priority), purego.NewCallback(function), data, purego.NewCallback(notify))
+	var destroyCb uintptr = NULLPTR
+	if notify != nil {
+		destroyCb = purego.NewCallback(notify)
+	}
+
+	purego.SyscallN(c.gIdleAddFull, uintptr(priority), purego.NewCallback(function), data, destroyCb)
 }
 
 func (c *defaultContext) GSignalConnectData(instance GtkWidget, detailedSignal string, cHandler GCallback, data uintptr, destroyData GClosureNotify, connectFlags GConnectFlags) uint32 {
@@ -117,7 +122,7 @@ func (c *defaultContext) GtkWindowResize(window GtkWindow, width, height int) {
 }
 
 func (c *defaultContext) GtkWindowSetGeometryHints(window GtkWindow, geometryWidget GtkWidget, geometry GdkGeometry, geomMask GdkWindowHints) {
-	purego.SyscallN(c.gtkWindowSetGeometryHints, uintptr(window), uintptr(geometryWidget), uintptr(geometry), uintptr(geomMask))
+	purego.SyscallN(c.gtkWindowSetGeometryHints, uintptr(window), uintptr(geometryWidget), uintptr(unsafe.Pointer(&geometry)), uintptr(geomMask))
 }
 
 func (c *defaultContext) GtkWindowSetResizable(window GtkWindow, resizable bool) {
@@ -177,10 +182,10 @@ func (c *defaultContext) WebKitWebViewLoadURI(webview WebKitWebView, uri string)
 func (c *defaultContext) WebKitWebViewLoadHTML(webview WebKitWebView, content string, baseUri string) {
 	cstrContent, free := cStr(content)
 	defer free()
-	cstrBaseUri, free := cStr(baseUri)
-	defer free()
 	baseUriPtr := NULLPTR
 	if baseUri != "" {
+		cstrBaseUri, free := cStr(baseUri)
+		defer free()
 		baseUriPtr = uintptr(unsafe.Pointer(cstrBaseUri))
 	}
 	purego.SyscallN(c.webKitWebViewLoadHTML, uintptr(webview), uintptr(unsafe.Pointer(cstrContent)), baseUriPtr)
@@ -189,7 +194,13 @@ func (c *defaultContext) WebKitWebViewLoadHTML(webview WebKitWebView, content st
 func (c *defaultContext) WebKitWebViewRunJavascript(webview WebKitWebView, script string, cancellable GCancellable, callback GAsyncReadyCallback, userData uintptr) {
 	cstrScript, free := cStr(script)
 	defer free()
-	purego.SyscallN(c.webKitWebViewRunJavascript, uintptr(webview), uintptr(unsafe.Pointer(cstrScript)), uintptr(cancellable), purego.NewCallback(callback), userData)
+
+	var callbackCb uintptr = NULLPTR
+	if callback != nil {
+		callbackCb = purego.NewCallback(callback)
+	}
+
+	purego.SyscallN(c.webKitWebViewRunJavascript, uintptr(webview), uintptr(unsafe.Pointer(cstrScript)), uintptr(cancellable), callbackCb, userData)
 }
 
 func (c *defaultContext) WebKitJavascriptResultGetJsValue(jsResult WebKitJavascriptResult) JSCValue {

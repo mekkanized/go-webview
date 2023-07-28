@@ -4,7 +4,6 @@ type (
 	GAsyncResult uintptr
 	GCancellable uintptr
 	GObject      uintptr
-	GdkGeometry  uintptr
 	GtkContainer uintptr
 	GtkWidget    uintptr
 	GtkWindow    uintptr
@@ -37,18 +36,47 @@ const (
 	NULLPTR uintptr = 0
 )
 
+type GdkGravity uint
+
+const (
+	GDK_GRAVITY_NORTH_WEST GdkGravity = 1 << iota
+	GDK_GRAVITY_NORTH
+	GDK_GRAVITY_NORTH_EAST
+	GDK_GRAVITY_WEST
+	GDK_GRAVITY_CENTER
+	GDK_GRAVITY_EAST
+	GDK_GRAVITY_SOUTH_WEST
+	GDK_GRAVITY_SOUTH
+	GDK_GRAVITY_SOUTH_EAST
+	GDK_GRAVITY_STATIC
+)
+
+type GdkGeometry struct {
+	MinWidth   int
+	MinHeight  int
+	MaxWidth   int
+	MaxHeight  int
+	BaseWidth  int
+	BaseHeight int
+	WidthInc   int
+	HeightInc  int
+	MinAspect  float64
+	MaxAspect  float64
+	WinGravity GdkGravity
+}
+
 type GdkWindowHints uint
 
 const (
-	GDK_HINT_POS GdkWindowHints = 1 << iota
-	GDK_HINT_MIN_SIZE
-	GDK_HINT_MAX_SIZE
-	GDK_HINT_BASE_SIZE
-	GDK_HINT_ASPECT
-	GDK_HINT_RESIZE_INC
-	GDK_HINT_WIN_GRAVITY
-	GDK_HINT_USER_POS
-	GDK_HINT_USER_SIZE
+	GDK_HINT_POS         GdkWindowHints = 1 << 0
+	GDK_HINT_MIN_SIZE    GdkWindowHints = 1 << 1
+	GDK_HINT_MAX_SIZE    GdkWindowHints = 1 << 2
+	GDK_HINT_BASE_SIZE   GdkWindowHints = 1 << 3
+	GDK_HINT_ASPECT      GdkWindowHints = 1 << 4
+	GDK_HINT_RESIZE_INC  GdkWindowHints = 1 << 5
+	GDK_HINT_WIN_GRAVITY GdkWindowHints = 1 << 6
+	GDK_HINT_USER_POS    GdkWindowHints = 1 << 7
+	GDK_HINT_USER_SIZE   GdkWindowHints = 1 << 8
 )
 
 type GtkWindowType uint

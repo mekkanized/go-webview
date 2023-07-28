@@ -1,6 +1,26 @@
 package webview
 
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/jchv/go-webview2"
+)
+
+type Hint webview2.Hint
+
+const (
+	// HintNone specifies that width and height are default size
+	HintNone Hint = iota
+
+	// HintFixed specifies that window size can not be changed by a user
+	HintFixed
+
+	// HintMin specifies that width and height are minimum bounds
+	HintMin
+
+	// HintMax specifies that width and height are maximum bounds
+	HintMax
+)
 
 // WebView is the interface for the webview.
 type WebView interface {
@@ -63,16 +83,21 @@ type WebView interface {
 	Bind(name string, f interface{}) error
 }
 
-const (
-	// HintNone specifies that width and height are default size
-	HintNone Hint = iota
+type WindowOptions struct {
+	Title  string
+	Width  uint
+	Height uint
+	IconId uint
+	Center bool
+}
 
-	// HintFixed specifies that window size can not be changed by a user
-	HintFixed
+type WebViewOptions struct {
+	Window unsafe.Pointer
+	Debug  bool
 
-	// HintMin specifies that width and height are minimum bounds
-	HintMin
+	DataPath string
 
-	// HintMax specifies that width and height are maximum bounds
-	HintMax
-)
+	AutoFocus bool
+
+	WindowOptions WindowOptions
+}

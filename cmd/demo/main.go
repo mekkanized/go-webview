@@ -14,9 +14,7 @@ func main() {
 		log.Fatalln("Failed to load webview.")
 	}
 	defer w.Destroy()
-	w.SetTitle("Mekkanized")
 	w.SetSize(800, 600, webview.HintNone)
 	w.Navigate("https://html5test.com/")
-	// w.Init(`console.log("Hello world!")`)
 	w.Run()
 }

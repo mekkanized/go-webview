@@ -16,7 +16,7 @@ func main() {
 	defer w.Destroy()
 
 	w.SetTitle("Basic Example")
-	w.SetSize(480, 320, webview.HintNone)
+	w.SetSize(480, 320, webview.HintFixed)
 	w.SetHtml("Thanks for using webview!")
 
 	w.Run()

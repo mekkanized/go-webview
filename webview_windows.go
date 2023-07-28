@@ -1,3 +1,5 @@
+//go:build windows
+
 package webview
 
 import (
@@ -6,14 +8,13 @@ import (
 	"github.com/jchv/go-webview2"
 )
 
+// New calls NewWindow to create a new window and a new webview instance. If debug
+// is non-zero - developer tools will be enabled (if the platform supports them).
 func New(debug bool) WebView {
 	return webview2.New(debug)
 }
 
-func NewWindow(debug bool, window unsafe.Pointer) WebView {
-	return webview2.NewWindow(debug, window)
-}
-
+// NewWithOptions creates a new webview using the provided options.
 func NewWithOptions(options WebViewOptions) WebView {
 	return webview2.NewWithOptions(options)
 }
