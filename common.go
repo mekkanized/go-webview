@@ -2,29 +2,10 @@ package webview
 
 import (
 	"unsafe"
-
-	"github.com/jchv/go-webview2"
-)
-
-type Hint webview2.Hint
-
-const (
-	// HintNone specifies that width and height are default size
-	HintNone Hint = iota
-
-	// HintFixed specifies that window size can not be changed by a user
-	HintFixed
-
-	// HintMin specifies that width and height are minimum bounds
-	HintMin
-
-	// HintMax specifies that width and height are maximum bounds
-	HintMax
 )
 
 // WebView is the interface for the webview.
 type WebView interface {
-
 	// Run runs the main loop until it's terminated. After this function exits -
 	// you must destroy the webview.
 	Run()

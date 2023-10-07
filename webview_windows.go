@@ -3,8 +3,6 @@
 package webview
 
 import (
-	"unsafe"
-
 	"github.com/jchv/go-webview2"
 )
 
@@ -16,5 +14,18 @@ func New(debug bool) WebView {
 
 // NewWithOptions creates a new webview using the provided options.
 func NewWithOptions(options WebViewOptions) WebView {
-	return webview2.NewWithOptions(options)
+	winOptions := webview2.WebViewOptions{
+		Window:    options.Window,
+		Debug:     options.Debug,
+		DataPath:  options.DataPath,
+		AutoFocus: options.AutoFocus,
+		WindowOptions: webview2.WindowOptions{
+			Title:  options.WindowOptions.Title,
+			Width:  options.WindowOptions.Width,
+			Height: options.WindowOptions.Height,
+			IconId: options.WindowOptions.IconId,
+			Center: options.WindowOptions.Center,
+		},
+	}
+	return webview2.NewWithOptions(winOptions)
 }
