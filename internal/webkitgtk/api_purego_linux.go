@@ -46,6 +46,8 @@ type defaultContext struct {
 	webKitSettingsSetEnableDeveloperExtras               uintptr
 	webKitSettingsSetEnableWriteConsoleMessagesToStdout  uintptr
 	webKitSettingsSetJavascriptCanAccessClipboard        uintptr
+	webKitWebInspectorShow                               uintptr
+	webKitWebViewGetInspector                            uintptr
 }
 
 func NewDefaultContext() (Context, error) {
@@ -237,6 +239,10 @@ func (c *defaultContext) WebKitUserScriptNew(source string, injectedFrames WebKi
 	return WebKitUserScript(ret)
 }
 
+func (c *defaultContext) WebKitWebInspectorShow(inspector WebKitInspector) {
+	purego.SyscallN(c.webKitWebInspectorShow, uintptr(inspector))
+}
+
 func (c *defaultContext) WebKitSettingsSetEnableDeveloperExtras(settings WebKitSettings, enabled bool) {
 	purego.SyscallN(c.webKitSettingsSetEnableDeveloperExtras, uintptr(settings), uintptr(boolToInt(enabled)))
 }
@@ -247,6 +253,11 @@ func (c *defaultContext) WebKitSettingsSetEnableWriteConsoleMessagesToStdout(set
 
 func (c *defaultContext) WebKitSettingsSetJavascriptCanAccessClipboard(settings WebKitSettings, enabled bool) {
 	purego.SyscallN(c.webKitSettingsSetJavascriptCanAccessClipboard, uintptr(settings), uintptr(boolToInt(enabled)))
+}
+
+func (c *defaultContext) WebKitWebViewGetInspector(webview WebKitWebView) WebKitInspector {
+	ret, _, _ := purego.SyscallN(c.webKitWebViewGetInspector, uintptr(webview))
+	return WebKitInspector(ret)
 }
 
 func (c *defaultContext) LoadFunctions() error {
@@ -287,6 +298,8 @@ func (c *defaultContext) LoadFunctions() error {
 	c.webKitSettingsSetEnableDeveloperExtras = g.get("webkit_settings_set_enable_developer_extras")
 	c.webKitSettingsSetEnableWriteConsoleMessagesToStdout = g.get("webkit_settings_set_enable_write_console_messages_to_stdout")
 	c.webKitSettingsSetJavascriptCanAccessClipboard = g.get("webkit_settings_set_javascript_can_access_clipboard")
+	c.webKitWebInspectorShow = g.get("webkit_web_inspector_show")
+	c.webKitWebViewGetInspector = g.get("webkit_web_view_get_inspector")
 
 	return errors.Wrap(g.err, "failed to load functions")
 }

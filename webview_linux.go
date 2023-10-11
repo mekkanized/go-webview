@@ -91,6 +91,8 @@ func NewWithOptions(options WebViewOptions) WebView {
 	if options.Debug {
 		webkit.WebKitSettingsSetEnableWriteConsoleMessagesToStdout(settings, true)
 		webkit.WebKitSettingsSetEnableDeveloperExtras(settings, true)
+		inspector := webkit.WebKitWebViewGetInspector(w.webview)
+		webkit.WebKitWebInspectorShow(inspector)
 	}
 
 	webkit.GtkWidgetShowAll(webkitgtk.GtkWidget(w.window))

@@ -19,6 +19,7 @@ type (
 	JSValueRef               uintptr
 	WebKitJavascriptResult   uintptr
 	WebKitSettings           uintptr
+	WebKitInspector          uintptr
 	WebKitUserContentManager uintptr
 	WebKitUserScript         uintptr
 	WebKitWebView            uintptr
@@ -154,4 +155,6 @@ type Context interface {
 	WebKitSettingsSetEnableDeveloperExtras(settings WebKitSettings, enabled bool)
 	WebKitSettingsSetEnableWriteConsoleMessagesToStdout(settings WebKitSettings, enabled bool)
 	WebKitSettingsSetJavascriptCanAccessClipboard(settings WebKitSettings, enabled bool)
+	WebKitWebInspectorShow(inspector WebKitInspector)
+	WebKitWebViewGetInspector(webview WebKitWebView) WebKitInspector
 }
