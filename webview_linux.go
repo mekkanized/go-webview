@@ -133,24 +133,22 @@ func (w *webview) SetSize(width int, height int, hint Hint) {
 	case HintFixed:
 		webkit.GtkWidgetSetSizeRequest(webkitgtk.GtkWidget(w.window), width, height)
 	default:
-		panic("Warning: HintMin and HintMax are not supported on Linux")
-		// geometry := webkitgtk.GdkGeometry{
-		// 	MinWidth:  width,
-		// 	MaxWidth:  width,
-		// 	MinHeight: height,
-		// 	MaxHeight: height,
-		// }
+		geometry := webkitgtk.GdkGeometry{}
 
-		// var h webkitgtk.GdkWindowHints
-		// switch hint {
-		// default:
-		// 	fallthrough
-		// case HintMax:
-		// 	h = webkitgtk.GDK_HINT_MAX_SIZE
-		// case HintMin:
-		// 	h = webkitgtk.GDK_HINT_MIN_SIZE
-		// }
-		// webkit.GtkWindowSetGeometryHints(w.window, webkitgtk.GtkWidget(webkitgtk.NULLPTR), geometry, h)
+		var h webkitgtk.GdkWindowHints
+		switch hint {
+		default:
+			fallthrough
+		case HintMin:
+			h = webkitgtk.GDK_HINT_MIN_SIZE
+			geometry.MinHeight = int32(height)
+			geometry.MinWidth = int32(width)
+		case HintMax:
+			h = webkitgtk.GDK_HINT_MAX_SIZE
+			geometry.MaxHeight = int32(height)
+			geometry.MaxWidth = int32(width)
+		}
+		webkit.GtkWindowSetGeometryHints(w.window, webkitgtk.GtkWidget(webkitgtk.NULLPTR), geometry, h)
 	}
 }
 

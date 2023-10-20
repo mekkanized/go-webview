@@ -52,14 +52,14 @@ const (
 )
 
 type GdkGeometry struct {
-	MinWidth   int
-	MinHeight  int
-	MaxWidth   int
-	MaxHeight  int
-	BaseWidth  int
-	BaseHeight int
-	WidthInc   int
-	HeightInc  int
+	MinWidth   int32
+	MinHeight  int32
+	MaxWidth   int32
+	MaxHeight  int32
+	BaseWidth  int32
+	BaseHeight int32
+	WidthInc   int32
+	HeightInc  int32
 	MinAspect  float64
 	MaxAspect  float64
 	WinGravity GdkGravity
