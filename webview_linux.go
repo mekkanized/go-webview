@@ -11,7 +11,6 @@ import (
 	"unsafe"
 
 	"github.com/mekkanized/go-webview/internal/webkitgtk"
-	"github.com/pkg/errors"
 )
 
 var webkit webkitgtk.Context = nil
@@ -42,10 +41,10 @@ func NewWithOptions(options WebViewOptions) WebView {
 		var err error
 		webkit, err = webkitgtk.NewDefaultContext()
 		if err != nil {
-			panic(errors.Wrap(err, "failed to create webkit context"))
+			panic(fmt.Errorf("failed to create webkit context: %w", err))
 		}
 		if err = webkit.LoadFunctions(); err != nil {
-			panic(errors.Wrap(err, "failed to load webkit functions"))
+			panic(fmt.Errorf("failed to load webkit functions: %w", err))
 		}
 
 		fmt.Printf("WebKitGTK version %d.%d.%d\n", webkit.WebKitGetMajorVersion(), webkit.WebKitGetMinorVersion(), webkit.WebKitGetMicroVersion())
@@ -53,7 +52,7 @@ func NewWithOptions(options WebViewOptions) WebView {
 
 	// Initialize GTK
 	if !webkit.GtkInitCheck() {
-		panic(errors.New("failed to initialize GTK"))
+		panic(fmt.Errorf("failed to initialize GTK"))
 	}
 
 	w.window = webkitgtk.GtkWindow(options.Window)
@@ -73,7 +72,7 @@ func NewWithOptions(options WebViewOptions) WebView {
 	webkit.GSignalConnectData(webkitgtk.GtkWidget(manager), "script-message-received::external", func(manager webkitgtk.WebKitUserContentManager, result webkitgtk.WebKitJavascriptResult, arg uintptr) {
 		s, err := getStringFromJsResult(result)
 		if err != nil {
-			fmt.Printf("RPC call failed: %v\n", errors.Wrap(err, "failed to get string from js result"))
+			fmt.Printf("RPC call failed: %v\n", fmt.Errorf("failed to get string from js result: %w", err))
 		}
 
 		w.onMessage(s)
@@ -174,11 +173,11 @@ func (w *webview) Eval(js string) {
 func (w *webview) Bind(name string, f interface{}) error {
 	v := reflect.ValueOf(f)
 	if v.Kind() != reflect.Func {
-		return errors.New("only functions can be bound")
+		return fmt.Errorf("only functions can be bound")
 	}
 
 	if n := v.Type().NumOut(); n > 2 {
-		return errors.New("function may only return a value or a value+error")
+		return fmt.Errorf("function may only return a value or a value+error")
 	}
 
 	w.mutex.Lock()
@@ -251,7 +250,7 @@ func (w *webview) callBinding(req rpcMessage) (interface{}, error) {
 	isVariadic := v.Type().IsVariadic()
 	numIn := v.Type().NumIn()
 	if (isVariadic && len(req.Params) < numIn-1) || (!isVariadic && len(req.Params) != numIn) {
-		return nil, errors.New("function arguments mismatch")
+		return nil, fmt.Errorf("function arguments mismatch: expected %d, got %d", numIn, len(req.Params))
 	}
 
 	args := []reflect.Value{}
@@ -263,7 +262,7 @@ func (w *webview) callBinding(req rpcMessage) (interface{}, error) {
 			arg = reflect.New(v.Type().In(i))
 		}
 		if err := json.Unmarshal(req.Params[i], arg.Interface()); err != nil {
-			return nil, errors.Wrap(err, "failed to unmarshal argument")
+			return nil, fmt.Errorf("failed to unmarshal argument: %w", err)
 		}
 		args = append(args, arg.Elem())
 	}
@@ -286,14 +285,14 @@ func (w *webview) callBinding(req rpcMessage) (interface{}, error) {
 	case 2:
 		// Two results: first one is value, second one is error
 		if !res[1].Type().Implements(errorType) {
-			return nil, errors.New("second return value must be an error")
+			return nil, fmt.Errorf("second return value must be an error, got %s", res[1].Type().String())
 		}
 		if res[1].Interface() != nil {
 			return res[0].Interface(), nil
 		}
 		return res[0].Interface(), res[1].Interface().(error)
 	default:
-		return nil, errors.New("unexpected number of return values")
+		return nil, fmt.Errorf("unexpected number of return values: %d", len(res))
 	}
 }
 
@@ -304,7 +303,7 @@ func getStringFromJsResult(r webkitgtk.WebKitJavascriptResult) (string, error) {
 		value := webkit.WebKitJavascriptResultGetJsValue(webkitgtk.WebKitJavascriptResult(r))
 		str = webkit.JsCValueToString(value)
 	} else {
-		return "", errors.New("unsupported webkit version")
+		return "", fmt.Errorf("unsupported webkit version: %d.%d.%d", webkit.WebKitGetMajorVersion(), webkit.WebKitGetMinorVersion(), webkit.WebKitGetMicroVersion())
 		// ctx := webkitloader.WebkitJavascriptResultGetGlobalContext(r)
 		// value := webkitloader.WebkitJavascriptResultGetValue(r)
 		// c_str := webkitloader.JSValueToStringCopy(ctx, value, nil)

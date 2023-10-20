@@ -3,11 +3,11 @@
 package webkitgtk
 
 import (
+	"fmt"
 	"runtime"
 	"unsafe"
 
 	"github.com/ebitengine/purego"
-	"github.com/pkg/errors"
 )
 
 type defaultContext struct {
@@ -51,7 +51,7 @@ type defaultContext struct {
 func NewDefaultContext() (Context, error) {
 	ctx := &defaultContext{}
 	if err := ctx.init(); err != nil {
-		return nil, errors.Wrap(err, "failed to initialize default context")
+		return nil, fmt.Errorf("failed to initialize default context: %w", err)
 	}
 
 	return ctx, nil
@@ -288,7 +288,11 @@ func (c *defaultContext) LoadFunctions() error {
 	c.webKitSettingsSetEnableWriteConsoleMessagesToStdout = g.get("webkit_settings_set_enable_write_console_messages_to_stdout")
 	c.webKitSettingsSetJavascriptCanAccessClipboard = g.get("webkit_settings_set_javascript_can_access_clipboard")
 
-	return errors.Wrap(g.err, "failed to load functions")
+	if g.err != nil {
+		return fmt.Errorf("failed to load functions: %w", g.err)
+	}
+
+	return nil
 }
 
 func boolToInt(b bool) int {

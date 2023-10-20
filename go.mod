@@ -1,11 +1,10 @@
 module github.com/mekkanized/go-webview
 
-go 1.21
+go 1.18
 
 require (
 	github.com/ebitengine/purego v0.6.0-alpha.1
 	github.com/jchv/go-webview2 v0.0.0-20221223143126-dc24628cff85
-	github.com/pkg/errors v0.9.1
 )
 
 require (

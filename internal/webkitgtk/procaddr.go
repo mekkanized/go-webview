@@ -1,6 +1,8 @@
 package webkitgtk
 
-import "github.com/pkg/errors"
+import (
+	"fmt"
+)
 
 type procAddressGetter struct {
 	ctx *defaultContext
@@ -14,11 +16,11 @@ func (p *procAddressGetter) get(name string) uintptr {
 
 	proc, err := p.ctx.getProcAddress(name)
 	if err != nil {
-		p.err = errors.Wrapf(err, "webkit2gtk: %s is missing", name)
+		p.err = fmt.Errorf("webkit2gtk: %s is missing", name)
 		return 0
 	}
 	if proc == 0 {
-		p.err = errors.Errorf("webkit2gtk: %s is missing", name)
+		p.err = fmt.Errorf("webkit2gtk: %s is missing", name)
 		return 0
 	}
 
