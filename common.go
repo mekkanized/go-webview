@@ -82,3 +82,11 @@ type WebViewOptions struct {
 
 	WindowOptions WindowOptions
 }
+
+// New calls NewWindow to create a new window and a new webview instance. If debug
+// is non-zero - developer tools will be enabled (if the platform supports them).
+func New(debug bool) WebView {
+	return NewWithOptions(WebViewOptions{
+		Debug: debug,
+	})
+}

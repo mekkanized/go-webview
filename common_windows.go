@@ -1,3 +1,5 @@
+// go:build windows
+
 package webview
 
 import "github.com/jchv/go-webview2"
