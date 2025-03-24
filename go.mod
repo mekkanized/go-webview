@@ -5,9 +5,8 @@ go 1.18
 replace github.com/progrium/macdriver => ../darwinkit
 
 require (
-	github.com/ebitengine/purego v0.6.0-alpha.1
+	github.com/ebitengine/purego v0.8.2
 	github.com/jchv/go-webview2 v0.0.0-20221223143126-dc24628cff85
-	github.com/progrium/macdriver v0.4.0
 )
 
 require (
